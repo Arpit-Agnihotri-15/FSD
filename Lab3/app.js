@@ -1,10 +1,41 @@
 import http from "http";
+import * as teams from "./pages/teams.js";
 
-const server = http.createServer(); // turn on the server and the number of times request comes respond 
-server.on('request',(req,res)=>{
-    res.end("<h1>SIH Internal</h1>");
+const PORT = 5000;
+
+const sendJson = (res, statusCode, data) => {
+    res.writeHead(statusCode, {"content-type": "application/json"});
+    res.end(data === 'undefined' ? '' : JSON.stringify(data));
+};
+
+const parseJSONBody = (req) => {
+    return new Promise((resolve, reject) => {
+        let body = '';
+        req.on("data", (chunk) => {
+            body += chunk.toString();
+        });
+        req.on("end", () => {
+            try {
+                resolve(body ? JSON.parse(body) : {});
+            } catch (error) {
+                reject(error);
+            }
+        });
+    });
+};
+
+//console.log("Teams:", teams.getAllTeams());
+const server = http.createServer((req, res) => {
+    //if (req.url === "/" && req.method === "GET") {
+    //    const allTeams = teams.getAllTeams();
+    //    res.writeHead(200, { "Content-Type": "application/json" });
+    //    res.end(JSON.stringify(allTeams));
+    //} else 
+    //    res.statusCode = 404;
+    //    res.end("Not Found");
+    //}
 });
 
-server.listen(5000, ()=>{
-    console.log("SIH Server is Running")
+server.listen(PORT, () => {
+    console.log("SIH Server is Running");
 });
